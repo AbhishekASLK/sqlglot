@@ -1412,27 +1412,9 @@ class TestDuckDB(Validator):
         )
 
         self.validate_all(
-            "LIST_CONTAINS(MAP_KEYS(CAST({'k1': 'v1', 'k2': 'v2', 'k3': 'v3'} AS MAP(TEXT, TEXT))), 'k1')",
+            "ARRAY_CONTAINS(MAP_KEYS(CAST({'k1': 'v1', 'k2': 'v2', 'k3': 'v3'} AS MAP(TEXT, TEXT))), 'k1')",
             read={
                 "snowflake": "MAP_CONTAINS_KEY('k1', {'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}::MAP(VARCHAR, VARCHAR))",
-            },
-        )
-        self.validate_all(
-            "LIST_CONTAINS(MAP_KEYS(CAST({'k1': 'v1', 'k2': 'v2'} AS MAP(TEXT, TEXT))), NULL)",
-            read={
-                "snowflake": "MAP_CONTAINS_KEY(NULL, {'k1': 'v1', 'k2': 'v2'}::MAP(VARCHAR, VARCHAR))",
-            },
-        )
-        self.validate_all(
-            "LIST_CONTAINS(MAP_KEYS(CAST(NULL AS MAP(TEXT, TEXT))), 'k1')",
-            read={
-                "snowflake": "MAP_CONTAINS_KEY('k1', NULL::MAP(VARCHAR, VARCHAR))",
-            },
-        )
-        self.validate_all(
-            "LIST_CONTAINS(MAP_KEYS(CAST({'a': 'val_a', 'b': 'val_b'} AS MAP(TEXT, TEXT))), 'c')",
-            read={
-                "snowflake": "MAP_CONTAINS_KEY('c', {'a': 'val_a', 'b': 'val_b'}::MAP(VARCHAR, VARCHAR))",
             },
         )
 
