@@ -79,6 +79,9 @@ ARRAY<STRING>;
 CURRENT_SCHEMA();
 VARCHAR;
 
+MONTHNAME(tbl.date_col);
+VARCHAR;
+
 CHR(65);
 VARCHAR;
 
@@ -5712,6 +5715,18 @@ VARCHAR;
 # dialect: tsql
 STUFF(tbl.str_col, tbl.int_col, tbl.int_col, tbl.str_col);
 VARCHAR;
+
+# dialect: tsql
+DEGREES(tbl.int_col);
+INT;
+
+# dialect: tsql
+DEGREES(tbl.float_col);
+FLOAT;
+
+# dialect: tsql
+DEGREES(tbl.bigint_col);
+BIGINT;
 
 --------------------------------------
 -- MySQL

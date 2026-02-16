@@ -4521,10 +4521,8 @@ class Parser(metaclass=_Parser):
         if schema:
             return self._parse_schema(this=this)
 
-        version = self._parse_version()
-
-        if version:
-            this.set("version", version)
+        if self.dialect.ALIAS_POST_VERSION:
+            this.set("version", self._parse_version())
 
         if self.dialect.ALIAS_POST_TABLESAMPLE:
             this.set("sample", self._parse_table_sample())
@@ -4550,6 +4548,9 @@ class Parser(metaclass=_Parser):
 
         if not self.dialect.ALIAS_POST_TABLESAMPLE:
             this.set("sample", self._parse_table_sample())
+
+        if not self.dialect.ALIAS_POST_VERSION:
+            this.set("version", self._parse_version())
 
         if joins:
             for join in self._parse_joins():
@@ -5535,7 +5536,7 @@ class Parser(metaclass=_Parser):
             else (
                 self._parse_function()
                 or (
-                    not self._match(TokenType.ALIAS, advance=False)
+                    not self._match_set((TokenType.ALIAS, TokenType.DCOLON), advance=False)
                     and self._parse_var(any_token=True, upper=True)
                 )
             )
