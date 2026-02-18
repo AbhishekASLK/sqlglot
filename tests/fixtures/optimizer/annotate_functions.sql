@@ -823,6 +823,14 @@ ARRAY<DOUBLE>;
 APPROX_PERCENTILE(3, array(0.2, 0.3));
 ARRAY<INT>;
 
+# dialect: spark, databricks
+BIT_OR(tbl.int_col);
+INT;
+
+# dialect: spark, databricks
+BIT_OR(tbl.bigint_col);
+BIGINT;
+
 --------------------------------------
 -- BigQuery
 --------------------------------------
