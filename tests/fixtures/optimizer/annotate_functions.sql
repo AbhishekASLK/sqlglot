@@ -831,6 +831,14 @@ INT;
 BIT_OR(tbl.bigint_col);
 BIGINT;
 
+# dialect: spark, databricks
+BIT_AND(tbl.int_col);
+INT;
+
+# dialect: spark, databricks
+BIT_AND(tbl.bigint_col);
+BIGINT;
+
 --------------------------------------
 -- BigQuery
 --------------------------------------
