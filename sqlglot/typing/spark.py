@@ -31,8 +31,9 @@ EXPRESSION_METADATA = {
         for exp_type in {
             exp.ArrayCompact,
             exp.ArrayInsert,
-            exp.BitwiseOrAgg,
             exp.BitwiseAndAgg,
+            exp.BitwiseOrAgg,
+            exp.BitwiseXorAgg,
             exp.Overlay,
         }
     },
