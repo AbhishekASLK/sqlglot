@@ -357,6 +357,7 @@ class ClickHouse(Dialect):
             },
             "ANY": exp.AnyValue.from_arg_list,
             "ARRAYCOMPACT": exp.ArrayCompact.from_arg_list,
+            "ARRAYCONCAT": exp.ArrayConcat.from_arg_list,
             "ARRAYSUM": exp.ArraySum.from_arg_list,
             "ARRAYMAX": exp.ArrayMax.from_arg_list,
             "ARRAYMIN": exp.ArrayMin.from_arg_list,

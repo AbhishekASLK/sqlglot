@@ -700,6 +700,7 @@ class TestClickhouse(Validator):
         self.validate_identity("arrayCompact([1, 1, nan, nan, 2, 3, 3, 3])").assert_is(
             exp.ArrayCompact
         )
+        self.validate_identity("arrayConcat([1, 2], [3, 4])").assert_is(exp.ArrayConcat)
         self.validate_identity("SELECT UTCTimestamp()", "SELECT CURRENT_TIMESTAMP('UTC')")
 
     def test_clickhouse_values(self):
