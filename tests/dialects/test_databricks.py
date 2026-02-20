@@ -473,3 +473,10 @@ class TestDatabricks(Validator):
         self.validate_identity(
             "SELECT OVERLAY('Spark SQL' PLACING 'ANSI ' FROM 7 FOR 0)",
         )
+
+    def test_declare(self):
+        self.validate_identity("DECLARE VAR x INT", "DECLARE x INT")
+        self.validate_identity("DECLARE x INT")
+        self.validate_identity("DECLARE VARIABLE myvar INT DEFAULT 1", "DECLARE myvar INT = 1")
+        self.validate_identity("DECLARE x, y, z INT DEFAULT 1", "DECLARE x, y, z INT = 1")
+        self.validate_identity("DECLARE x INT = 1")
