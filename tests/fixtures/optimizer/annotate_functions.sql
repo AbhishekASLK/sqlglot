@@ -863,6 +863,14 @@ INT;
 BIT_XOR(tbl.bigint_col);
 BIGINT;
 
+# dialect: hive, spark2, spark, databricks
+ARRAY_DISTINCT(tbl.array_col);
+ARRAY<STRING>;
+
+# dialect: hive,spark2, spark, databricks
+ARRAY_DISTINCT(array(1, 2, 3, null, 3));
+ARRAY<INT>;
+
 --------------------------------------
 -- BigQuery
 --------------------------------------
