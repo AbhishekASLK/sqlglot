@@ -47,6 +47,13 @@ EXPRESSION_METADATA = {
             exp.Second,
         }
     },
+    **{
+        expr_type: {"annotator": lambda self, e: self._annotate_by_args(e, "this")}
+        for expr_type in {
+            exp.ArrayDistinct,
+            exp.Reverse,
+        }
+    },
     exp.ApproxQuantile: {"annotator": lambda self, e: self._annotate_by_args(e, "quantile")},
     exp.ArrayIntersect: {"annotator": lambda self, e: self._annotate_by_args(e, "expressions")},
     exp.Coalesce: {
@@ -55,5 +62,4 @@ EXPRESSION_METADATA = {
     exp.If: {"annotator": lambda self, e: self._annotate_by_args(e, "true", "false", promote=True)},
     exp.Quantile: {"annotator": lambda self, e: self._annotate_by_args(e, "quantile")},
     exp.RegexpSplit: {"returns": exp.DataType.build("ARRAY<STRING>")},
-    exp.Reverse: {"annotator": lambda self, e: self._annotate_by_args(e, "this")},
 }
