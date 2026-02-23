@@ -1,6 +1,20 @@
 Changelog
 =========
 
+## [v29.0.1] - 2026-02-23
+### :boom: BREAKING CHANGES
+- due to [`fdfdfb1`](https://github.com/tobymao/sqlglot/commit/fdfdfb1703f1f408ad01453147e3d269f0911fef) - support GET_CURRENT_TIME() for DuckDB *(PR [#7126](https://github.com/tobymao/sqlglot/pull/7126) by [@AbhishekASLK](https://github.com/AbhishekASLK))*:
+
+  support GET_CURRENT_TIME() for DuckDB (#7126)
+
+
+### :sparkles: New Features
+- [`fdfdfb1`](https://github.com/tobymao/sqlglot/commit/fdfdfb1703f1f408ad01453147e3d269f0911fef) - **duckdb**: support GET_CURRENT_TIME() for DuckDB *(PR [#7126](https://github.com/tobymao/sqlglot/pull/7126) by [@AbhishekASLK](https://github.com/AbhishekASLK))*
+
+### :wrench: Chores
+- [`21a2a57`](https://github.com/tobymao/sqlglot/commit/21a2a5773717f675963dddbdba3df9343da60abe) - actually emit warning *(commit by [@tobymao](https://github.com/tobymao))*
+
+
 ## [v29.0.0] - 2026-02-23
 ### :boom: BREAKING CHANGES
 - due to [`c8ddcc3`](https://github.com/tobymao/sqlglot/commit/c8ddcc383bab07b807ed1d6b6f9bef91417e43c1) - Annotate COLLATION(expr) for Spark/DBX *(PR [#6957](https://github.com/tobymao/sqlglot/pull/6957) by [@AbhishekASLK](https://github.com/AbhishekASLK))*:
@@ -13241,3 +13255,4 @@ Changelog
 [v28.9.0]: https://github.com/tobymao/sqlglot/compare/v28.8.0...v28.9.0
 [v28.10.0]: https://github.com/tobymao/sqlglot/compare/v28.9.0...v28.10.0
 [v29.0.0]: https://github.com/tobymao/sqlglot/compare/v28.10.1...v29.0.0
+[v29.0.1]: https://github.com/tobymao/sqlglot/compare/v29.0.0...v29.0.1
