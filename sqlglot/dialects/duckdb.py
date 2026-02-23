@@ -2015,7 +2015,6 @@ class DuckDB(Dialect):
             exp.JSONFormat: _json_format_sql,
             exp.JSONValueArray: _json_extract_value_array_sql,
             exp.Lateral: _explode_to_unnest_sql,
-            exp.Localtimestamp: rename_func("CURRENT_LOCALTIMESTAMP"),
             exp.LogicalOr: lambda self, e: self.func("BOOL_OR", _cast_to_boolean(e.this)),
             exp.LogicalAnd: lambda self, e: self.func("BOOL_AND", _cast_to_boolean(e.this)),
             exp.Select: transforms.preprocess([_seq_to_range_in_generator]),
