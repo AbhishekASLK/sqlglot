@@ -7,6 +7,17 @@ from sqlglot.trie import new_trie
 # Import Token and TokenType from tokenizer_core (compiled with mypyc)
 from sqlglot.tokenizer_core import Token, TokenType
 
+try:
+    import sqlglotrs  # type: ignore # noqa: F401
+    import warnings
+
+    warnings.warn(
+        "sqlglot[rs] is deprecated and no longer compatible with sqlglot. "
+        "Please use sqlglotc instead for faster parsing: pip install sqlglot[c]",
+    )
+except ImportError:
+    pass
+
 if t.TYPE_CHECKING:
     from sqlglot.dialects.dialect import DialectType
 
