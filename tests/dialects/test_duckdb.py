@@ -1443,6 +1443,9 @@ class TestDuckDB(Validator):
         self.validate_identity("VERSION()")
         self.validate_identity("SELECT TODAY()", "SELECT CURRENT_DATE")
         self.validate_identity("SELECT GET_CURRENT_TIME()", "SELECT CURRENT_TIME")
+        self.validate_identity("CURRENT_LOCALTIMESTAMP()", "LOCALTIMESTAMP").assert_is(
+            exp.Localtimestamp
+        )
 
     def test_array_index(self):
         with self.assertLogs(helper_logger) as cm:

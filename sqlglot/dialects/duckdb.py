@@ -1597,6 +1597,7 @@ class DuckDB(Dialect):
             "BIT_AND": exp.BitwiseAndAgg.from_arg_list,
             "BIT_OR": exp.BitwiseOrAgg.from_arg_list,
             "BIT_XOR": exp.BitwiseXorAgg.from_arg_list,
+            "CURRENT_LOCALTIMESTAMP": exp.Localtimestamp.from_arg_list,
             "DATEDIFF": _build_date_diff,
             "DATE_DIFF": _build_date_diff,
             "DATE_TRUNC": date_trunc_to_time,
