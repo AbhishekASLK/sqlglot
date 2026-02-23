@@ -6239,6 +6239,10 @@ VARCHAR;
 COUNTIF(tbl.int_col > tbl.int_col);
 HUGEINT;
 
+# dialect: duckdb
+DATE_DIFF('year', tbl.timestamp_col, tbl.timestamp_col);
+BIGINT;
+
 --------------------------------------
 -- Presto / Trino
 --------------------------------------
