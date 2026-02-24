@@ -24,7 +24,7 @@ install-dev:
 	$(PIP) install -e ".[dev]"
 
 install-devc: clean
-	cd sqlglotc && pip install -e .
+	cd sqlglotc && $(PIP) install -e .
 
 install-pre-commit:
 	pre-commit install
