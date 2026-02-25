@@ -1263,9 +1263,10 @@ class TestSnowflake(Validator):
             "ARRAY_GENERATE_RANGE(0, 3)",
             write={
                 "bigquery": "GENERATE_ARRAY(0, 3 - 1)",
+                "duckdb": "RANGE(0, 3)",
                 "postgres": "GENERATE_SERIES(0, 3 - 1)",
-                "presto": "SEQUENCE(0, 3 - 1)",
-                "snowflake": "ARRAY_GENERATE_RANGE(0, (3 - 1) + 1)",
+                "presto": "SEQUENCE(0, 2)",
+                "snowflake": "ARRAY_GENERATE_RANGE(0, 3)",
             },
         )
         self.validate_all(
@@ -1274,6 +1275,21 @@ class TestSnowflake(Validator):
                 "bigquery": "GENERATE_ARRAY(0, 3)",
                 "postgres": "GENERATE_SERIES(0, 3)",
                 "presto": "SEQUENCE(0, 3)",
+            },
+        )
+
+        self.validate_all(
+            "SELECT ARRAY_GENERATE_RANGE(-5, -25, -10)",
+            write={
+                "duckdb": "SELECT RANGE(-5, -25, -10)",
+                "snowflake": "SELECT ARRAY_GENERATE_RANGE(-5, -25, -10)",
+            },
+        )
+        self.validate_all(
+            "SELECT ARRAY_GENERATE_RANGE(5, 1, -1)",
+            write={
+                "duckdb": "SELECT RANGE(5, 1, -1)",
+                "snowflake": "SELECT ARRAY_GENERATE_RANGE(5, 1, -1)",
             },
         )
         self.validate_all(

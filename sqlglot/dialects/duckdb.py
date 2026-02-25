@@ -3122,9 +3122,13 @@ class DuckDB(Dialect):
             return super().join_sql(expression)
 
         def generateseries_sql(self, expression: exp.GenerateSeries) -> str:
-            # GENERATE_SERIES(a, b) -> [a, b], RANGE(a, b) -> [a, b)
+            # GENERATE_SERIES(a, b) -> [a, b] (inclusive), RANGE(a, b) -> [a, b) (exclusive)
+            start = expression.args.get("start")
+            end = expression.args.get("end")
+            step = expression.args.get("step")
+
             if expression.args.get("is_end_exclusive"):
-                return rename_func("RANGE")(self, expression)
+                return self.func("RANGE", start, end, step)
 
             return self.function_fallback_sql(expression)
 
