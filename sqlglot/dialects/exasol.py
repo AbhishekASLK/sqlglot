@@ -432,11 +432,7 @@ class Exasol(Dialect):
             expression = exp.JSONExtract(expressions=args)
 
             if self._match_texts("EMITS"):
-                schema = self._parse_schema()
-                if schema is not None:
-                    expression.set("emits", schema.expressions)
-                else:
-                    self.raise_error("Expected schema after EMITS")
+                expression.set("emits", self._parse_schema())
 
             return expression
 
@@ -1071,12 +1067,15 @@ class Exasol(Dialect):
         def collate_sql(self, expression: exp.Collate) -> str:
             return self.sql(expression.this)
 
-        def jsonextract_sql(self, e: exp.JSONExtract) -> str:
-            sql = self.func("JSON_EXTRACT", e.this, e.expression, *e.expressions)
-            columns = e.args.get("emits")
-            if columns:
-                emits = self.expressions(sqls=columns)
-                sql = f"{sql} EMITS ({emits})"
+        def jsonextract_sql(self, expression: exp.JSONExtract) -> str:
+            sql = self.func(
+                "JSON_EXTRACT", expression.this, expression.expression, *expression.expressions
+            )
+
+            emits = self.sql(expression, "emits")
+            if emits:
+                sql = f"{sql} EMITS {emits}"
+
             return sql
 
         @unsupported_args("flag")

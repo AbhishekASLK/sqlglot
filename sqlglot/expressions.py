@@ -6849,6 +6849,7 @@ class JSONExtract(Binary, Func):
         "quote": False,
         "on_condition": False,
         "requires_json": False,
+        "emits": False,
     }
     _sql_names = ["JSON_EXTRACT"]
     is_var_len_args = True
