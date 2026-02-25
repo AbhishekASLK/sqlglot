@@ -18,6 +18,7 @@ from sqlglot.dialects.dialect import (
     datestrtodate_sql,
     build_formatted_time,
     filter_array_using_unnest,
+    generate_series_sql,
     if_sql,
     inline_array_unless_query,
     max_or_greatest,
@@ -1162,6 +1163,7 @@ class BigQuery(Dialect):
             exp.FromTimeZone: lambda self, e: self.func(
                 "DATETIME", self.func("TIMESTAMP", e.this, e.args.get("zone")), "'UTC'"
             ),
+            exp.GenerateSeries: generate_series_sql("GENERATE_ARRAY"),
             exp.GroupConcat: lambda self, e: groupconcat_sql(
                 self, e, func_name="STRING_AGG", within_group=False, sep=None
             ),
@@ -1419,17 +1421,6 @@ class BigQuery(Dialect):
                 this.unnest() if isinstance(this, exp.Paren) else this,
                 expr.unnest() if isinstance(expr, exp.Paren) else expr,
             )
-
-        def generateseries_sql(self, expression: exp.GenerateSeries) -> str:
-            start = expression.args.get("start")
-            end = expression.args.get("end")
-            step = expression.args.get("step")
-
-            if expression.args.get("is_end_exclusive"):
-                adjusted_end = exp.Sub(this=end, expression=exp.Literal.number(1))
-                return self.func("GENERATE_ARRAY", start, adjusted_end, step)
-
-            return self.func("GENERATE_ARRAY", start, end, step)
 
         def column_parts(self, expression: exp.Column) -> str:
             if expression.meta.get("quoted_column"):

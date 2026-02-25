@@ -27,6 +27,7 @@ from sqlglot.dialects.dialect import (
     datestrtodate_sql,
     encode_decode_sql,
     explode_to_unnest_sql,
+    generate_series_sql,
     getbit_sql,
     groupconcat_sql,
     inline_array_unless_query,
@@ -1994,6 +1995,7 @@ class DuckDB(Dialect):
             ),
             exp.EuclideanDistance: rename_func("LIST_DISTANCE"),
             exp.GenerateDateArray: _generate_datetime_array_sql,
+            exp.GenerateSeries: generate_series_sql("GENERATE_SERIES", "RANGE"),
             exp.GenerateTimestampArray: _generate_datetime_array_sql,
             exp.Getbit: getbit_sql,
             exp.GroupConcat: lambda self, e: groupconcat_sql(self, e, within_group=False),
@@ -3120,17 +3122,6 @@ class DuckDB(Dialect):
                 expression.set("kind", None)
 
             return super().join_sql(expression)
-
-        def generateseries_sql(self, expression: exp.GenerateSeries) -> str:
-            # GENERATE_SERIES(a, b) -> [a, b] (inclusive), RANGE(a, b) -> [a, b) (exclusive)
-            start = expression.args.get("start")
-            end = expression.args.get("end")
-            step = expression.args.get("step")
-
-            if expression.args.get("is_end_exclusive"):
-                return self.func("RANGE", start, end, step)
-
-            return self.function_fallback_sql(expression)
 
         def countif_sql(self, expression: exp.CountIf) -> str:
             if self.dialect.version >= (1, 2):

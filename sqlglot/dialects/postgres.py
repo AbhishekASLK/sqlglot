@@ -15,6 +15,7 @@ from sqlglot.dialects.dialect import (
     datestrtodate_sql,
     build_formatted_time,
     filter_array_using_unnest,
+    generate_series_sql,
     getbit_sql,
     inline_array_sql,
     json_extract_segments,
@@ -709,17 +710,6 @@ class Postgres(Dialect):
 
             return sql
 
-        def generateseries_sql(self, expression: exp.GenerateSeries) -> str:
-            start = expression.args.get("start")
-            end = expression.args.get("end")
-            step = expression.args.get("step")
-
-            if expression.args.get("is_end_exclusive"):
-                adjusted_end = exp.Sub(this=end, expression=exp.Literal.number(1))
-                return self.func("GENERATE_SERIES", start, adjusted_end, step)
-
-            return self.func("GENERATE_SERIES", start, end, step)
-
         TYPE_MAPPING = {
             **generator.Generator.TYPE_MAPPING,
             exp.DataType.Type.TINYINT: "SMALLINT",
@@ -755,6 +745,7 @@ class Postgres(Dialect):
             exp.DateSub: _date_add_sql("-"),
             exp.Explode: rename_func("UNNEST"),
             exp.ExplodingGenerateSeries: rename_func("GENERATE_SERIES"),
+            exp.GenerateSeries: generate_series_sql("GENERATE_SERIES"),
             exp.Getbit: getbit_sql,
             exp.GroupConcat: lambda self, e: groupconcat_sql(
                 self, e, func_name="STRING_AGG", within_group=False
