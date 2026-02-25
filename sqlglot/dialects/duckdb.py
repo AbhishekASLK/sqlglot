@@ -3615,33 +3615,16 @@ class DuckDB(Dialect):
             map_arg = expression.this
             keys_to_delete = expression.expressions
 
-            x_dot_key = exp.Dot(
-                this=exp.to_identifier("x", quoted=False),
-                expression=exp.to_identifier("key", quoted=False),
-            )
-
-            condition = exp.Not(
-                this=exp.In(
-                    this=x_dot_key,
-                    expressions=keys_to_delete,
-                )
-            )
+            x_dot_key = exp.Dot(this=exp.to_identifier("x"), expression=exp.to_identifier("key"))
 
             lambda_expr = exp.Lambda(
-                this=condition,
-                expressions=[exp.to_identifier("x", quoted=False)],
+                this=exp.In(this=x_dot_key, expressions=keys_to_delete).not_(),
+                expressions=[exp.to_identifier("x")],
             )
-
-            filtered = exp.ArrayFilter(
-                this=exp.func("map_entries", map_arg),
-                expression=lambda_expr,
-            )
-
             result = exp.func(
-                "map_from_entries",
-                filtered,
+                "MAP_FROM_ENTRIES",
+                exp.ArrayFilter(this=exp.func("MAP_ENTRIES", map_arg), expression=lambda_expr)
             )
-
             return self.sql(result)
 
         def startswith_sql(self, expression: exp.StartsWith) -> str:
