@@ -5054,6 +5054,10 @@ class Generator(metaclass=_Generator):
 
         return self.func("JSON_VALUE", expression.this, f"{path}{returning}{on_condition}")
 
+    def skipjsoncolumn_sql(self, expression: exp.SkipJSONColumn) -> str:
+        regexp = " REGEXP" if expression.args.get("regexp") else ""
+        return f"SKIP{regexp} {self.sql(expression.expression)}"
+
     def conditionalinsert_sql(self, expression: exp.ConditionalInsert) -> str:
         else_ = "ELSE " if expression.args.get("else_") else ""
         condition = self.sql(expression, "expression")
