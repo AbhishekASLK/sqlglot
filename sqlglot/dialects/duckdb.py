@@ -3623,7 +3623,7 @@ class DuckDB(Dialect):
             )
             result = exp.func(
                 "MAP_FROM_ENTRIES",
-                exp.ArrayFilter(this=exp.func("MAP_ENTRIES", map_arg), expression=lambda_expr)
+                exp.ArrayFilter(this=exp.func("MAP_ENTRIES", map_arg), expression=lambda_expr),
             )
             return self.sql(result)
 
