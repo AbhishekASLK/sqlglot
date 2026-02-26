@@ -842,6 +842,11 @@ class Snowflake(Dialect):
                 step=seq_get(args, 2),
                 is_end_exclusive=True,
             ),
+            "ARRAY_POSITION": lambda args: exp.ArrayPosition(
+                this=seq_get(args, 1),
+                expression=seq_get(args, 0),
+                zero_based=True,
+            ),
             "ARRAY_SORT": exp.SortArray.from_arg_list,
             "ARRAY_FLATTEN": exp.Flatten.from_arg_list,
             "BITAND": _build_bitwise(exp.BitwiseAnd, "BITAND"),
@@ -1632,6 +1637,11 @@ class Snowflake(Dialect):
                 e.expression
                 if e.args.get("ensure_variant") is False
                 else exp.cast(e.expression, exp.DType.VARIANT, copy=False),
+                e.this,
+            ),
+            exp.ArrayPosition: lambda self, e: self.func(
+                "ARRAY_POSITION",
+                e.expression,
                 e.this,
             ),
             exp.ArrayIntersect: rename_func("ARRAY_INTERSECTION"),

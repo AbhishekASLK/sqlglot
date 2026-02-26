@@ -6229,6 +6229,15 @@ FROM SEMANTIC_VIEW(
             },
         )
 
+    def test_array_position(self):
+        self.validate_all(
+            "SELECT ARRAY_POSITION(2, ARRAY_CONSTRUCT(1, 2, 3))",
+            write={
+                "snowflake": "SELECT ARRAY_POSITION(2, [1, 2, 3])",
+                "duckdb": "SELECT ARRAY_POSITION([1, 2, 3], 2) - 1",
+            },
+        )
+
     def test_space(self):
         # Integer literal
         self.validate_all(
