@@ -6251,6 +6251,14 @@ HUGEINT;
 DATE_DIFF('year', tbl.timestamp_col, tbl.timestamp_col);
 BIGINT;
 
+# dialect: duckdb
+EXTRACT('hour' FROM tbl.timestamp_col);
+BIGINT;
+
+# dialect: duckdb
+EXTRACT('month' FROM tbl.timestamp_col);
+BIGINT;
+
 --------------------------------------
 -- Presto / Trino
 --------------------------------------
