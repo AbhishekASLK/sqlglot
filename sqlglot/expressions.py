@@ -5589,7 +5589,7 @@ class ArrayFilter(Func):
 
 
 class ArrayFirst(Func):
-    pass
+    arg_types = {"this": True, "expression": False}
 
 
 class ArrayLast(Func):
