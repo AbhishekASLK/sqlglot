@@ -1613,6 +1613,8 @@ class Parser(metaclass=_Parser):
 
     RECURSIVE_CTE_SEARCH_KIND = {"BREADTH", "DEPTH", "CYCLE"}
 
+    SECURITY_PROPERTY_KEYWORDS = {"DEFINER", "INVOKER", "NONE"}
+
     MODIFIABLES = (exp.Query, exp.Table, exp.TableFromRows, exp.Values)
 
     STRICT_CAST = True
@@ -2535,7 +2537,7 @@ class Parser(metaclass=_Parser):
         if self._match_text_seq("SQL", "SECURITY"):
             return self.expression(
                 exp.SqlSecurityProperty,
-                this=self._match_texts(("DEFINER", "INVOKER")) and self._prev.text.upper(),
+                this=self._match_texts(self.SECURITY_PROPERTY_KEYWORDS) and self._prev.text.upper(),
             )
 
         index = self._index

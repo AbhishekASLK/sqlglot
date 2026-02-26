@@ -5712,3 +5712,7 @@ class Generator(metaclass=_Generator):
     def executesql_sql(self, expression: exp.ExecuteSql) -> str:
         self.unsupported("Unsupported Execute syntax")
         return ""
+
+    def altermodifysqlsecurity_sql(self, expression: exp.AlterModifySqlSecurity) -> str:
+        props = self.expressions(expression, sep=" ")
+        return f"MODIFY {props}"

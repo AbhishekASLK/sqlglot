@@ -1332,6 +1332,10 @@ class AlterRename(Expression):
     pass
 
 
+class AlterModifySqlSecurity(Expression):
+    arg_types = {"expressions": True}
+
+
 class SwapTable(Expression):
     pass
 
