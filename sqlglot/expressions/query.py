@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import typing as t
 
-from sqlglot.helper import mypyc_attr, ensure_list
+from sqlglot.helper import mypyc_attr, trait, ensure_list
 from sqlglot.expressions.core import *  # noqa: F401, F403
 from sqlglot.expressions.core import (  # noqa: F401 (private names not in *)
     _apply_builder,
@@ -71,7 +71,58 @@ def _apply_cte_builder(
     )
 
 
-class _Query(Query):
+@trait
+@mypyc_attr(allow_interpreted_subclasses=True)
+class DerivedTable(Expression):
+    @property
+    def selects(self) -> t.List[Expression]:
+        return self.this.selects if isinstance(self.this, Query) else []
+
+    @property
+    def named_selects(self) -> t.List[str]:
+        return [select.output_name for select in self.selects]
+
+
+@trait
+@mypyc_attr(allow_interpreted_subclasses=True)
+class UDTF(DerivedTable):
+    @property
+    def selects(self) -> t.List[Expression]:
+        alias = self.args.get("alias")
+        return alias.columns if alias else []
+
+
+Q = t.TypeVar("Q", bound="Query")
+
+
+@trait
+@mypyc_attr(allow_interpreted_subclasses=True)
+class Query(Expression):
+    """Trait for any SELECT/UNION/etc. query expression."""
+
+    @property
+    def ctes(self) -> t.List[CTE]:
+        with_ = self.args.get("with_")
+        return with_.expressions if with_ else []
+
+    @property
+    def selects(self) -> t.List[Expression]:
+        raise NotImplementedError("Subclasses must implement selects")
+
+    @property
+    def named_selects(self) -> t.List[str]:
+        raise NotImplementedError("Subclasses must implement named_selects")
+
+    def select(
+        self: Q,
+        *expressions: t.Optional[ExpOrStr],
+        append: bool = True,
+        dialect: DialectType = None,
+        copy: bool = True,
+        **opts,
+    ) -> Q:
+        raise NotImplementedError("Query objects must implement `select`")
+
     def subquery(self, alias: t.Optional[ExpOrStr] = None, copy: bool = True) -> Subquery:
         """
         Returns a `Subquery` that wraps around this query.
@@ -937,7 +988,7 @@ class Table(Expression):
         return col
 
 
-class SetOperation(_Query):
+class SetOperation(Query):
     arg_types = {
         "with_": False,
         "this": True,
@@ -1044,7 +1095,7 @@ class Lock(Expression):
     arg_types = {"update": True, "expressions": False, "wait": False, "key": False}
 
 
-class Select(_Query):
+class Select(Query):
     arg_types = {
         "with_": False,
         "kind": False,
@@ -1581,7 +1632,7 @@ class Select(_Query):
         return self.expressions
 
 
-class Subquery(DerivedTable, _Query):
+class Subquery(DerivedTable, Query):
     is_subquery: t.ClassVar[bool] = True
     arg_types = {
         "this": True,

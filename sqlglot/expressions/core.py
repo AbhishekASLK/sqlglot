@@ -31,7 +31,7 @@ if t.TYPE_CHECKING:
     from sqlglot._typing import Lit
     from sqlglot.dialects.dialect import DialectType
     from sqlglot.expressions.datatypes import DATA_TYPE, DataType, DType, Interval, IntervalSpan
-    from sqlglot.expressions.query import CTE, Select, Subquery
+    from sqlglot.expressions.query import Select
 
 logger = logging.getLogger("sqlglot")
 
@@ -120,7 +120,7 @@ class Expression:
         cls.key = cls.__name__.lower()
         cls.required_args = {k for k, v in cls.arg_types.items() if v}
         # This is so that docstrings are not inherited in pdoc
-        cls.__doc__ = cls.__doc__ or ""
+        setattr(cls, "__doc__", getattr(cls, "__doc__", None) or "")
 
     def __eq__(self, other: object) -> bool:
         return self is other or (type(self) is type(other) and hash(self) == hash(other))
@@ -1139,71 +1139,6 @@ class _Predicate(Condition, Predicate):
     pass
 
 
-@trait
-@mypyc_attr(allow_interpreted_subclasses=True)
-class DerivedTable(Expression):
-    @property
-    def selects(self) -> t.List[Expression]:
-        return self.this.selects if isinstance(self.this, Query) else []
-
-    @property
-    def named_selects(self) -> t.List[str]:
-        return [select.output_name for select in self.selects]
-
-
-Q = t.TypeVar("Q", bound="Query")
-
-
-@trait
-@mypyc_attr(allow_interpreted_subclasses=True)
-class Query(Expression):
-    """Trait for any SELECT/UNION/etc. query expression."""
-
-    @property
-    def ctes(self) -> t.List["CTE"]:
-        with_ = self.args.get("with_")
-        return with_.expressions if with_ else []
-
-    @property
-    def selects(self) -> t.List[Expression]:
-        raise NotImplementedError("Subclasses must implement selects")
-
-    @property
-    def named_selects(self) -> t.List[str]:
-        raise NotImplementedError("Subclasses must implement named_selects")
-
-    def select(
-        self: Q,
-        *expressions: t.Optional[ExpOrStr],
-        append: bool = True,
-        dialect: DialectType = None,
-        copy: bool = True,
-        **opts,
-    ) -> Q:
-        raise NotImplementedError("Query objects must implement `select`")
-
-    def subquery(self, alias: t.Optional[ExpOrStr] = None, copy: bool = True) -> "Subquery":
-        raise NotImplementedError("Query objects must implement `subquery`")
-
-    def limit(
-        self: Q,
-        expression: ExpOrStr | int,
-        dialect: DialectType = None,
-        copy: bool = True,
-        **opts,
-    ) -> Q:
-        raise NotImplementedError("Query objects must implement `limit`")
-
-
-@trait
-@mypyc_attr(allow_interpreted_subclasses=True)
-class UDTF(DerivedTable):
-    @property
-    def selects(self) -> t.List[Expression]:
-        alias = self.args.get("alias")
-        return alias.columns if alias else []
-
-
 class Cache(Expression):
     arg_types = {
         "this": True,
@@ -1221,37 +1156,8 @@ class Refresh(Expression):
     arg_types = {"this": True, "kind": True}
 
 
-class DDL(Expression):
-    @property
-    def ctes(self) -> t.List[CTE]:
-        """Returns a list of all the CTEs attached to this statement."""
-        with_ = self.args.get("with_")
-        return with_.expressions if with_ else []
-
-    @property
-    def selects(self) -> t.List[Expression]:
-        """If this statement contains a query (e.g. a CTAS), this returns the query's projections."""
-        return self.expression.selects if isinstance(self.expression, Query) else []
-
-    @property
-    def named_selects(self) -> t.List[str]:
-        """
-        If this statement contains a query (e.g. a CTAS), this returns the output
-        names of the query's projections.
-        """
-        return self.expression.named_selects if isinstance(self.expression, Query) else []
-
-
 class LockingStatement(Expression):
     arg_types = {"this": True, "expression": True}
-
-
-@trait
-@mypyc_attr(allow_interpreted_subclasses=True)
-class DML:
-    """Trait for data manipulation language statements."""
-
-    pass
 
 
 @trait

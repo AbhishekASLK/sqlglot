@@ -7,14 +7,13 @@ import typing as t
 from sqlglot.helper import mypyc_attr
 from sqlglot.expressions.core import (
     Expression,
-    DML,
-    DDL,
     ExpOrStr,
     _apply_builder,
     _apply_list_builder,
     maybe_copy,
     _apply_conjunction_builder,
 )
+from sqlglot.expressions.ddl import DDL, DML
 from sqlglot.expressions.query import (
     Table,
     Where,

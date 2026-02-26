@@ -39,7 +39,7 @@ from sqlglot.expressions.core import (  # noqa: F401,E402
     _is_wrong_expression,
     _to_s,
 )
-from sqlglot.expressions.query import _apply_cte_builder, _Query  # noqa: F401,E402
+from sqlglot.expressions.query import _apply_cte_builder  # noqa: F401,E402
 from sqlglot.expressions.dml import _DML  # noqa: F401,E402
 from sqlglot.expressions.array import _ExplodeOuter  # noqa: F401,E402
 

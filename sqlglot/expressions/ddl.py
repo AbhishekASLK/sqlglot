@@ -4,8 +4,39 @@ from __future__ import annotations
 
 import typing as t
 
-from sqlglot.helper import mypyc_attr
-from sqlglot.expressions.core import Expression, DDL, Func
+from sqlglot.helper import mypyc_attr, trait
+from sqlglot.expressions.core import Expression, Func
+from sqlglot.expressions.query import Query
+
+if t.TYPE_CHECKING:
+    from sqlglot.expressions.query import CTE
+
+
+class DDL(Expression):
+    @property
+    def ctes(self) -> t.List[CTE]:
+        """Returns a list of all the CTEs attached to this statement."""
+        with_ = self.args.get("with_")
+        return with_.expressions if with_ else []
+
+    @property
+    def selects(self) -> t.List[Expression]:
+        """If this statement contains a query (e.g. a CTAS), this returns the query's projections."""
+        return self.expression.selects if isinstance(self.expression, Query) else []
+
+    @property
+    def named_selects(self) -> t.List[str]:
+        """
+        If this statement contains a query (e.g. a CTAS), this returns the output
+        names of the query's projections.
+        """
+        return self.expression.named_selects if isinstance(self.expression, Query) else []
+
+
+@trait
+@mypyc_attr(allow_interpreted_subclasses=True)
+class DML:
+    """Trait for data manipulation language statements."""
 
 
 class Create(DDL):

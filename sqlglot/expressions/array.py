@@ -8,11 +8,11 @@ from sqlglot.helper import mypyc_attr
 from sqlglot.expressions.core import (
     Expression,
     Func,
-    UDTF,
     ExplodeOuter,
     Binary,
     to_identifier,
 )
+from sqlglot.expressions.query import UDTF
 
 
 # Array creation / construction
