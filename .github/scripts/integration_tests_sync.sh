@@ -76,9 +76,11 @@ case "${1:-}" in
     if command -v gh >/dev/null 2>&1; then
       EXISTING=$(gh pr list --head "$BRANCH" --json number --jq 'length' 2>/dev/null || echo "0")
       if [ "$EXISTING" = "0" ]; then
+        PARENT_URL=$(git -C .. remote get-url origin 2>/dev/null | sed 's/\.git$//' | sed 's|git@github.com:|https://github.com/|')
+        BODY="Parent branch: ${PARENT_URL}/tree/${BRANCH}"
         gh pr create \
           --title "$BRANCH" \
-          --body "Auto-created from sqlglot parent repo." \
+          --body "$BODY" \
           --head "$BRANCH" 2>/dev/null || true
       fi
     fi
