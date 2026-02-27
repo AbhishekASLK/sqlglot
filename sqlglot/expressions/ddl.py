@@ -153,7 +153,7 @@ class Pragma(Expression):
 
 
 class Declare(Expression):
-    arg_types = {"expressions": True}
+    arg_types = {"expressions": True, "replace": False}
 
 
 class DeclareItem(Expression):
