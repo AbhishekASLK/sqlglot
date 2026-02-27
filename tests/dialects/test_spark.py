@@ -1319,6 +1319,10 @@ TBLPROPERTIES (
         self.validate_identity("DECLARE VARIABLE myvar INT DEFAULT 5", "DECLARE myvar INT = 5")
         self.validate_identity("DECLARE x, y, z INT DEFAULT 1", "DECLARE x, y, z INT = 1")
         self.validate_identity("DECLARE x INT = 5")
+        self.validate_identity("DECLARE five = 5")
+        self.validate_identity("DECLARE OR REPLACE five = 55")
+        self.validate_identity("DECLARE VARIABLE size DEFAULT 6", "DECLARE size = 6")
+        self.validate_identity("DECLARE some_var STRING")
 
     def test_set_variable(self):
         self.validate_all(
