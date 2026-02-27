@@ -1796,6 +1796,7 @@ class Snowflake(Dialect):
             exp.StarMap: rename_func("OBJECT_CONSTRUCT"),
             exp.StartsWith: rename_func("STARTSWITH"),
             exp.EndsWith: rename_func("ENDSWITH"),
+            exp.Rand: lambda self, e: self.func("RANDOM", e.this),
             exp.StrPosition: lambda self, e: strposition_sql(
                 self, e, func_name="CHARINDEX", supports_position=True
             ),
@@ -1861,13 +1862,6 @@ class Snowflake(Dialect):
                     result = result + " FROM LAST"
 
             return result
-
-        def rand_sql(self, expression: exp.Rand) -> str:
-            seed = expression.this
-            if seed is not None:
-                return self.func("RANDOM", seed)
-            else:
-                return self.func("RANDOM")
 
         SUPPORTED_JSON_PATH_PARTS = {
             exp.JSONPathKey,

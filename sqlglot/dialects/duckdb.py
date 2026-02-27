@@ -3553,10 +3553,10 @@ class DuckDB(Dialect):
             if lower and upper:
                 # scale DuckDB's [0,1) to the specified range
                 range_size = exp.paren(upper - lower)
-                scaled = lower + exp.func("random") * range_size
+                scaled = exp.Add(this=lower, expression=exp.func("random") * range_size)
 
                 # For now we assume that if bounds are set, return type is BIGINT. Snowflake/Teradata
-                result = exp.cast(scaled, exp.DType.BIGINT")
+                result = exp.cast(scaled, exp.DType.BIGINT)
                 return self.sql(result)
 
             # Default DuckDB behavior - just return RANDOM() as float
