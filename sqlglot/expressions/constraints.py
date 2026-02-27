@@ -25,7 +25,7 @@ class ColumnConstraint(Expression):
         return self.args["kind"]
 
 
-class AutoIncrementColumnConstraint(ColumnConstraintKind):
+class AutoIncrementColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
@@ -33,55 +33,55 @@ class ZeroFillColumnConstraint(ColumnConstraint):
     arg_types = {}
 
 
-class PeriodForSystemTimeConstraint(ColumnConstraintKind):
+class PeriodForSystemTimeConstraint(Expression, ColumnConstraintKind):
     arg_types = {"this": True, "expression": True}
 
 
-class CaseSpecificColumnConstraint(ColumnConstraintKind):
+class CaseSpecificColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {"not_": True}
 
 
-class CharacterSetColumnConstraint(ColumnConstraintKind):
+class CharacterSetColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {"this": True}
 
 
-class CheckColumnConstraint(ColumnConstraintKind):
+class CheckColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {"this": True, "enforced": False}
 
 
-class ClusteredColumnConstraint(ColumnConstraintKind):
+class ClusteredColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
-class CollateColumnConstraint(ColumnConstraintKind):
+class CollateColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
-class CommentColumnConstraint(ColumnConstraintKind):
+class CommentColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
-class CompressColumnConstraint(ColumnConstraintKind):
+class CompressColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {"this": False}
 
 
-class DateFormatColumnConstraint(ColumnConstraintKind):
+class DateFormatColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {"this": True}
 
 
-class DefaultColumnConstraint(ColumnConstraintKind):
+class DefaultColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
-class EncodeColumnConstraint(ColumnConstraintKind):
+class EncodeColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
-class ExcludeColumnConstraint(ColumnConstraintKind):
+class ExcludeColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
-class EphemeralColumnConstraint(ColumnConstraintKind):
+class EphemeralColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {"this": False}
 
 
@@ -89,7 +89,7 @@ class WithOperator(Expression):
     arg_types = {"this": True, "op": True}
 
 
-class GeneratedAsIdentityColumnConstraint(ColumnConstraintKind):
+class GeneratedAsIdentityColumnConstraint(Expression, ColumnConstraintKind):
     # this: True -> ALWAYS, this: False -> BY DEFAULT
     arg_types = {
         "this": False,
@@ -104,11 +104,11 @@ class GeneratedAsIdentityColumnConstraint(ColumnConstraintKind):
     }
 
 
-class GeneratedAsRowColumnConstraint(ColumnConstraintKind):
+class GeneratedAsRowColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {"start": False, "hidden": False}
 
 
-class IndexColumnConstraint(ColumnConstraintKind):
+class IndexColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {
         "this": False,
         "expressions": False,
@@ -120,39 +120,39 @@ class IndexColumnConstraint(ColumnConstraintKind):
     }
 
 
-class InlineLengthColumnConstraint(ColumnConstraintKind):
+class InlineLengthColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
-class NonClusteredColumnConstraint(ColumnConstraintKind):
+class NonClusteredColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
-class NotForReplicationColumnConstraint(ColumnConstraintKind):
+class NotForReplicationColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {}
 
 
-class MaskingPolicyColumnConstraint(ColumnConstraintKind):
+class MaskingPolicyColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {"this": True, "expressions": False}
 
 
-class NotNullColumnConstraint(ColumnConstraintKind):
+class NotNullColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {"allow_null": False}
 
 
-class OnUpdateColumnConstraint(ColumnConstraintKind):
+class OnUpdateColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
-class PrimaryKeyColumnConstraint(ColumnConstraintKind):
+class PrimaryKeyColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {"desc": False, "options": False}
 
 
-class TitleColumnConstraint(ColumnConstraintKind):
+class TitleColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
-class UniqueColumnConstraint(ColumnConstraintKind):
+class UniqueColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {
         "this": False,
         "index_type": False,
@@ -162,7 +162,7 @@ class UniqueColumnConstraint(ColumnConstraintKind):
     }
 
 
-class UppercaseColumnConstraint(ColumnConstraintKind):
+class UppercaseColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {}
 
 
@@ -170,19 +170,19 @@ class WatermarkColumnConstraint(Expression):
     arg_types = {"this": True, "expression": True}
 
 
-class PathColumnConstraint(ColumnConstraintKind):
+class PathColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
-class ProjectionPolicyColumnConstraint(ColumnConstraintKind):
+class ProjectionPolicyColumnConstraint(Expression, ColumnConstraintKind):
     pass
 
 
-class ComputedColumnConstraint(ColumnConstraintKind):
+class ComputedColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {"this": True, "persisted": False, "not_null": False, "data_type": False}
 
 
-class InOutColumnConstraint(ColumnConstraintKind):
+class InOutColumnConstraint(Expression, ColumnConstraintKind):
     arg_types = {"input_": False, "output": False, "variadic": False}
 
 

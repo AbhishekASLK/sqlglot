@@ -1,10 +1,10 @@
 # ruff: noqa: F405
 """
-## Expressions
+## Exprs
 
-Every AST node in SQLGlot is represented by a subclass of `Expression`.
+Every AST node in SQLGlot is represented by a subclass of `Expr`.
 
-This module contains the implementation of all supported `Expression` types. Additionally,
+This module contains the implementation of all supported `Expr` types. Additionally,
 it exposes a number of helper functions, which are mainly used to programmatically build
 SQL expressions, such as `sqlglot.expressions.select`.
 
@@ -29,6 +29,7 @@ from sqlglot.expressions.builders import *  # noqa: F401,F403
 
 # Explicitly import private helpers (not exported by star imports)
 from sqlglot.expressions.core import (  # noqa: F401,E402
+    Expression,
     _apply_builder,
     _apply_child_list_builder,
     _apply_list_builder,
@@ -40,7 +41,7 @@ from sqlglot.expressions.core import (  # noqa: F401,E402
     _to_s,
 )
 from sqlglot.expressions.query import _apply_cte_builder  # noqa: F401,E402
-from sqlglot.expressions.dml import _DML  # noqa: F401,E402
+from sqlglot.expressions.dml import DML  # noqa: F401,E402
 from sqlglot.expressions.array import _ExplodeOuter  # noqa: F401,E402
 
 from sqlglot.helper import subclasses

@@ -1,4 +1,3 @@
-# ruff: noqa: F405
 """sqlglot expressions builders."""
 
 from __future__ import annotations
@@ -6,46 +5,52 @@ from __future__ import annotations
 import re
 import typing as t
 
+from sqlglot._typing import E
 from sqlglot.helper import seq_get, ensure_collection, split_num_words
 from sqlglot.errors import ParseError, TokenError
-from sqlglot.expressions.core import *  # noqa: F401, F403
-from sqlglot.expressions.core import (  # noqa: F401 (private names)
-    _apply_builder,
-    _apply_child_list_builder,
-    _apply_list_builder,
-    _apply_conjunction_builder,
-    _apply_set_operation,
-    _combine,
-    _Predicate,
-    _TimeUnit,
+from sqlglot.expressions.core import (
+    Alias,
+    Anonymous,
+    Boolean,
+    Column,
+    Condition,
+    EQ,
+    Expr,
+    Func,
+    Identifier,
+    Literal,
+    Null,
+    Placeholder,
+    TABLE_PARTS,
+    Var,
+    logger,
     ExpOrStr,
-    QUERY_MODIFIERS,
     SAFE_IDENTIFIER_RE,
     maybe_parse,
     maybe_copy,
     to_identifier,
-    condition,
     convert,
-    not_,
-    and_,
-    or_,
-    xor,
-    paren,
     alias_,
     column,
 )
-from sqlglot.expressions.datatypes import *  # noqa: F401, F403
 from sqlglot.expressions.datatypes import DataType, DType, Interval, DATA_TYPE
-from sqlglot.expressions.query import *  # noqa: F401, F403
-from sqlglot.expressions.query import (  # noqa: F401 (private names)
-    _apply_cte_builder,
-    union,
-    intersect,
-    except_,
+from sqlglot.expressions.query import (
+    CTE,
+    From,
+    Query,
+    Schema,
+    Select,
+    Table,
+    TableAlias,
+    Tuple,
+    Values,
+    Where,
+    With,
 )
-from sqlglot.expressions.ddl import *  # noqa: F401, F403
-from sqlglot.expressions.dml import *  # noqa: F401, F403
-from sqlglot.expressions.functions import *  # noqa: F401, F403
+from sqlglot.expressions.ddl import Alter, AlterRename, RenameColumn
+from sqlglot.expressions.dml import Delete, Insert, Merge, Update, When, Whens
+from sqlglot.expressions.functions import Case, Cast
+from sqlglot.expressions.array import Array
 
 if t.TYPE_CHECKING:
     from sqlglot.dialects.dialect import DialectType
@@ -61,7 +66,7 @@ def select(*expressions: ExpOrStr, dialect: DialectType = None, **opts) -> Selec
 
     Args:
         *expressions: the SQL code string to parse as the expressions of a
-            SELECT statement. If an Expression instance is passed, this is used as-is.
+            SELECT statement. If an Expr instance is passed, this is used as-is.
         dialect: the dialect used to parse the input expressions (in the case that an
             input expression is a SQL string).
         **opts: other options to use to parse the input expressions (again, in the case
@@ -83,7 +88,7 @@ def from_(expression: ExpOrStr, dialect: DialectType = None, **opts) -> Select:
 
     Args:
         *expression: the SQL code string to parse as the FROM expressions of a
-            SELECT statement. If an Expression instance is passed, this is used as-is.
+            SELECT statement. If an Expr instance is passed, this is used as-is.
         dialect: the dialect used to parse the input expression (in the case that the
             input expression is a SQL string).
         **opts: other options to use to parse the input expressions (again, in the case
@@ -265,7 +270,7 @@ def merge(
     Returns:
         Merge: The syntax tree for the MERGE statement.
     """
-    expressions: t.List[Expression] = []
+    expressions: t.List[Expr] = []
     for when_expr in when_exprs:
         expression = maybe_parse(when_expr, dialect=dialect, copy=copy, into=Whens, **opts)
         expressions.extend([expression] if isinstance(expression, When) else expression.expressions)
@@ -312,7 +317,7 @@ INTERVAL_DAY_TIME_RE = re.compile(
 )
 
 
-def to_interval(interval: str | Expression) -> Interval:
+def to_interval(interval: str | Expr) -> Interval:
     """Builds an interval expression from a string like '1 day' or '5 months'."""
     if isinstance(interval, Literal):
         if not interval.is_string:
@@ -414,7 +419,7 @@ def subquery(
 
     Args:
         expression: the SQL code strings to parse.
-            If an Expression instance is passed, this is used as-is.
+            If an Expr instance is passed, this is used as-is.
         alias: the alias name to use.
         dialect: the dialect used to parse the input expression.
         **opts: other options to use to parse the input expressions.
@@ -558,7 +563,7 @@ def var(name: t.Optional[ExpOrStr]) -> Var:
     if not name:
         raise ValueError("Cannot convert empty name into var.")
 
-    if isinstance(name, Expression):
+    if isinstance(name, Expr):
         name = name.name
     return Var(this=name)
 
@@ -620,7 +625,7 @@ def rename_column(
     )
 
 
-def replace_children(expression: Expression, fun: t.Callable, *args, **kwargs) -> None:
+def replace_children(expression: Expr, fun: t.Callable, *args, **kwargs) -> None:
     """
     Replace children of an expression with the result of a lambda fun(child) -> exp.
     """
@@ -631,7 +636,7 @@ def replace_children(expression: Expression, fun: t.Callable, *args, **kwargs) -
         new_child_nodes = []
 
         for cn in child_nodes:
-            if isinstance(cn, Expression):
+            if isinstance(cn, Expr):
                 for child_node in ensure_collection(fun(cn, *args, **kwargs)):
                     new_child_nodes.append(child_node)
             else:
@@ -641,10 +646,10 @@ def replace_children(expression: Expression, fun: t.Callable, *args, **kwargs) -
 
 
 def replace_tree(
-    expression: Expression,
+    expression: Expr,
     fun: t.Callable,
-    prune: t.Optional[t.Callable[[Expression], bool]] = None,
-) -> Expression:
+    prune: t.Optional[t.Callable[[Expr], bool]] = None,
+) -> Expr:
     """
     Replace an entire tree with the result of function calls on each node.
 
@@ -660,13 +665,13 @@ def replace_tree(
         if new_node is not node:
             node.replace(new_node)
 
-            if isinstance(new_node, Expression):
+            if isinstance(new_node, Expr):
                 stack.append(new_node)
 
     return new_node
 
 
-def find_tables(expression: Expression) -> t.Set[Table]:
+def find_tables(expression: Expr) -> t.Set[Table]:
     """
     Find all tables referenced in a query.
 
@@ -686,7 +691,7 @@ def find_tables(expression: Expression) -> t.Set[Table]:
     }
 
 
-def column_table_names(expression: Expression, exclude: str = "") -> t.Set[str]:
+def column_table_names(expression: Expr, exclude: str = "") -> t.Set[str]:
     """
     Return all table names referenced through columns in an expression.
 
@@ -787,7 +792,7 @@ def replace_tables(
 
     mapping = {normalize_table_name(k, dialect=dialect): v for k, v in mapping.items()}
 
-    def _replace_tables(node: Expression) -> Expression:
+    def _replace_tables(node: Expr) -> Expr:
         if isinstance(node, Table) and node.meta.get("replace") is not False:
             original = normalize_table_name(node, dialect=dialect)
             new_name = mapping.get(original)
@@ -805,7 +810,7 @@ def replace_tables(
     return expression.transform(_replace_tables, copy=copy)  # type: ignore
 
 
-def replace_placeholders(expression: Expression, *args, **kwargs) -> Expression:
+def replace_placeholders(expression: Expr, *args, **kwargs) -> Expr:
     """Replace placeholders in an expression.
 
     Args:
@@ -825,7 +830,7 @@ def replace_placeholders(expression: Expression, *args, **kwargs) -> Expression:
         The mapped expression.
     """
 
-    def _replace_placeholders(node: Expression, args, **kwargs) -> Expression:
+    def _replace_placeholders(node: Expr, args, **kwargs) -> Expr:
         if isinstance(node, Placeholder):
             if node.this:
                 new_name = kwargs.get(node.this)
@@ -842,11 +847,11 @@ def replace_placeholders(expression: Expression, *args, **kwargs) -> Expression:
 
 
 def expand(
-    expression: Expression,
+    expression: Expr,
     sources: t.Dict[str, Query | t.Callable[[], Query]],
     dialect: DialectType = None,
     copy: bool = True,
-) -> Expression:
+) -> Expr:
     """Transforms an expression by expanding all referenced sources into subqueries.
 
     Examples:
@@ -868,7 +873,7 @@ def expand(
     """
     normalized_sources = {normalize_table_name(k, dialect=dialect): v for k, v in sources.items()}
 
-    def _expand(node: Expression):
+    def _expand(node: Expr):
         if isinstance(node, Table):
             name = normalize_table_name(node, dialect=dialect)
             source = normalized_sources.get(name)
@@ -919,7 +924,7 @@ def func(name: str, *args, copy: bool = True, dialect: DialectType = None, **kwa
 
     dialect = Dialect.get_or_raise(dialect)
 
-    converted: t.List[Expression] = [maybe_parse(arg, dialect=dialect, copy=copy) for arg in args]
+    converted: t.List[Expr] = [maybe_parse(arg, dialect=dialect, copy=copy) for arg in args]
     kwargs = {key: maybe_parse(value, dialect=dialect, copy=copy) for key, value in kwargs.items()}
 
     constructor = dialect.parser_class.FUNCTIONS.get(name.upper())
@@ -1049,7 +1054,7 @@ def null() -> Null:
 
 
 def apply_index_offset(
-    this: Expression,
+    this: Expr,
     expressions: t.List[E],
     offset: int,
     dialect: DialectType = None,

@@ -4,21 +4,21 @@ from __future__ import annotations
 
 import typing as t
 
-from sqlglot.helper import mypyc_attr
 from sqlglot.expressions.core import (
     Expression,
+    Expr,
     Func,
-    ExplodeOuter,
     Binary,
     to_identifier,
 )
+from sqlglot.helper import trait
 from sqlglot.expressions.query import UDTF
 
 
 # Array creation / construction
 
 
-class Array(Func):
+class Array(Expression, Func):
     arg_types = {
         "expressions": False,
         "bracket_notation": False,
@@ -27,162 +27,162 @@ class Array(Func):
     is_var_len_args = True
 
 
-class ArrayConstructCompact(Func):
+class ArrayConstructCompact(Expression, Func):
     arg_types = {"expressions": False}
     is_var_len_args = True
 
 
-class List(Func):
+class List(Expression, Func):
     arg_types = {"expressions": False}
     is_var_len_args = True
 
 
-class ToArray(Func):
+class ToArray(Expression, Func):
     pass
 
 
 # Array manipulation
 
 
-class ArrayAppend(Func):
+class ArrayAppend(Expression, Func):
     arg_types = {"this": True, "expression": True, "null_propagation": False}
 
 
-class ArrayCompact(Func):
+class ArrayCompact(Expression, Func):
     pass
 
 
-class ArrayConcat(Func):
+class ArrayConcat(Expression, Func):
     _sql_names = ["ARRAY_CONCAT", "ARRAY_CAT"]
     arg_types = {"this": True, "expressions": False, "null_propagation": False}
     is_var_len_args = True
 
 
-class ArrayFilter(Func):
+class ArrayFilter(Expression, Func):
     arg_types = {"this": True, "expression": True}
     _sql_names = ["FILTER", "ARRAY_FILTER"]
 
 
-class ArrayInsert(Func):
+class ArrayInsert(Expression, Func):
     arg_types = {"this": True, "position": True, "expression": True, "offset": False}
 
 
-class ArrayPrepend(Func):
+class ArrayPrepend(Expression, Func):
     arg_types = {"this": True, "expression": True, "null_propagation": False}
 
 
-class ArrayRemove(Func):
+class ArrayRemove(Expression, Func):
     arg_types = {"this": True, "expression": True, "null_propagation": False}
 
 
-class ArrayRemoveAt(Func):
+class ArrayRemoveAt(Expression, Func):
     arg_types = {"this": True, "position": True}
 
 
-class ArrayReverse(Func):
+class ArrayReverse(Expression, Func):
     pass
 
 
-class ArraySlice(Func):
+class ArraySlice(Expression, Func):
     arg_types = {"this": True, "start": True, "end": False, "step": False}
 
 
-class ArraySort(Func):
+class ArraySort(Expression, Func):
     arg_types = {"this": True, "expression": False}
 
 
-class SortArray(Func):
+class SortArray(Expression, Func):
     arg_types = {"this": True, "asc": False, "nulls_first": False}
 
 
 # Array predicates / search
 
 
-class ArrayAll(Func):
+class ArrayAll(Expression, Func):
     arg_types = {"this": True, "expression": True}
 
 
-class ArrayAny(Func):
+class ArrayAny(Expression, Func):
     arg_types = {"this": True, "expression": True}
 
 
-class ArrayContains(Binary, Func):
+class ArrayContains(Expression, Binary, Func):
     arg_types = {"this": True, "expression": True, "ensure_variant": False, "check_null": False}
     _sql_names = ["ARRAY_CONTAINS", "ARRAY_HAS"]
 
 
-class ArrayContainsAll(Binary, Func):
+class ArrayContainsAll(Expression, Binary, Func):
     _sql_names = ["ARRAY_CONTAINS_ALL", "ARRAY_HAS_ALL"]
 
 
-class ArrayExcept(Func):
+class ArrayExcept(Expression, Func):
     arg_types = {"this": True, "expression": True, "is_multiset": False}
 
 
-class ArrayIntersect(Func):
+class ArrayIntersect(Expression, Func):
     arg_types = {"expressions": True, "is_multiset": False}
     is_var_len_args = True
     _sql_names = ["ARRAY_INTERSECT", "ARRAY_INTERSECTION"]
 
 
-class ArrayOverlaps(Binary, Func):
+class ArrayOverlaps(Expression, Binary, Func):
     pass
 
 
-class ArrayPosition(Binary, Func):
+class ArrayPosition(Expression, Binary, Func):
     arg_types = {"this": True, "expression": True, "zero_based": False}
 
 
 # Array properties
 
 
-class ArrayDistinct(Func):
+class ArrayDistinct(Expression, Func):
     arg_types = {"this": True, "check_null": False}
 
 
-class ArrayFirst(Func):
+class ArrayFirst(Expression, Func):
     arg_types = {"this": True, "expression": False}
 
 
-class ArrayLast(Func):
+class ArrayLast(Expression, Func):
     pass
 
 
-class ArrayMax(Func):
+class ArrayMax(Expression, Func):
     pass
 
 
-class ArrayMin(Func):
+class ArrayMin(Expression, Func):
     pass
 
 
-class ArraySize(Func):
+class ArraySize(Expression, Func):
     arg_types = {"this": True, "expression": False}
     _sql_names = ["ARRAY_SIZE", "ARRAY_LENGTH"]
 
 
-class ArraySum(Func):
+class ArraySum(Expression, Func):
     arg_types = {"this": True, "expression": False}
 
 
 # Array conversion / utility
 
 
-class ArraysZip(Func):
+class ArraysZip(Expression, Func):
     arg_types = {"expressions": False}
     is_var_len_args = True
 
 
-class ArrayToString(Func):
+class ArrayToString(Expression, Func):
     arg_types = {"this": True, "expression": True, "null": False}
     _sql_names = ["ARRAY_TO_STRING", "ARRAY_JOIN"]
 
 
-class Flatten(Func):
+class Flatten(Expression, Func):
     pass
 
 
-class StringToArray(Func):
+class StringToArray(Expression, Func):
     arg_types = {"this": True, "expression": False, "null": False}
     _sql_names = ["STRING_TO_ARRAY", "SPLIT_BY_STRING", "STRTOK_TO_ARRAY"]
 
@@ -190,22 +190,22 @@ class StringToArray(Func):
 # Higher-order / lambda
 
 
-class Apply(Func):
+class Apply(Expression, Func):
     arg_types = {"this": True, "expression": True}
 
 
-class Reduce(Func):
+class Reduce(Expression, Func):
     arg_types = {"this": True, "initial": True, "merge": True, "finish": False}
 
 
-class Transform(Func):
+class Transform(Expression, Func):
     arg_types = {"this": True, "expression": True}
 
 
 # Table-valued / UDTF
 
 
-class GenerateSeries(Func):
+class GenerateSeries(Expression, Func):
     arg_types = {"start": True, "end": True, "step": False, "is_end_exclusive": False}
 
 
@@ -213,17 +213,21 @@ class ExplodingGenerateSeries(GenerateSeries):
     pass
 
 
-class Generator(Func, UDTF):
+class Generator(Expression, Func, UDTF):
     arg_types = {"rowcount": False, "timelimit": False}
 
 
-@mypyc_attr(allow_interpreted_subclasses=True)
-class Explode(Func, UDTF):
+class Explode(Expression, Func, UDTF):
     arg_types = {"this": True, "expressions": False}
     is_var_len_args = True
 
 
-class Inline(Func):
+class Inline(Expression, Func):
+    pass
+
+
+@trait
+class ExplodeOuter(Expr):
     pass
 
 
@@ -243,7 +247,7 @@ class PositionalColumn(Expression):
     pass
 
 
-class Unnest(Func, UDTF):
+class Unnest(Expression, Func, UDTF):
     arg_types = {
         "expressions": True,
         "alias": False,
@@ -252,7 +256,7 @@ class Unnest(Func, UDTF):
     }
 
     @property
-    def selects(self) -> t.List[Expression]:
+    def selects(self) -> t.List[Expr]:
         columns = super().selects
         offset = self.args.get("offset")
         if offset:
@@ -263,94 +267,94 @@ class Unnest(Func, UDTF):
 # Map
 
 
-class Map(Func):
+class Map(Expression, Func):
     arg_types = {"keys": False, "values": False}
 
     @property
-    def keys(self) -> t.List[Expression]:
+    def keys(self) -> t.List[Expr]:
         keys = self.args.get("keys")
         return keys.expressions if keys else []
 
     @property
-    def values(self) -> t.List[Expression]:
+    def values(self) -> t.List[Expr]:
         values = self.args.get("values")
         return values.expressions if values else []
 
 
-class MapCat(Func):
+class MapCat(Expression, Func):
     arg_types = {"this": True, "expression": True}
 
 
-class MapContainsKey(Func):
+class MapContainsKey(Expression, Func):
     arg_types = {"this": True, "key": True}
 
 
-class MapDelete(Func):
+class MapDelete(Expression, Func):
     arg_types = {"this": True, "expressions": True}
     is_var_len_args = True
 
 
-class MapFromEntries(Func):
+class MapFromEntries(Expression, Func):
     pass
 
 
-class MapInsert(Func):
+class MapInsert(Expression, Func):
     arg_types = {"this": True, "key": False, "value": True, "update_flag": False}
 
 
-class MapKeys(Func):
+class MapKeys(Expression, Func):
     pass
 
 
-class MapPick(Func):
+class MapPick(Expression, Func):
     arg_types = {"this": True, "expressions": True}
     is_var_len_args = True
 
 
-class MapSize(Func):
+class MapSize(Expression, Func):
     pass
 
 
-class StarMap(Func):
+class StarMap(Expression, Func):
     pass
 
 
-class ToMap(Func):
+class ToMap(Expression, Func):
     pass
 
 
-class VarMap(Func):
+class VarMap(Expression, Func):
     arg_types = {"keys": True, "values": True}
     is_var_len_args = True
 
     @property
-    def keys(self) -> t.List[Expression]:
+    def keys(self) -> t.List[Expr]:
         return self.args["keys"].expressions
 
     @property
-    def values(self) -> t.List[Expression]:
+    def values(self) -> t.List[Expr]:
         return self.args["values"].expressions
 
 
 # Struct
 
 
-class Struct(Func):
+class Struct(Expression, Func):
     arg_types = {"expressions": False}
     is_var_len_args = True
 
 
-class StructExtract(Func):
+class StructExtract(Expression, Func):
     arg_types = {"this": True, "expression": True}
 
 
 # Geospatial
 
 
-class StDistance(Func):
+class StDistance(Expression, Func):
     arg_types = {"this": True, "expression": True, "use_spheroid": False}
 
 
-class StPoint(Func):
+class StPoint(Expression, Func):
     arg_types = {"this": True, "expression": True, "null": False}
     _sql_names = ["ST_POINT", "ST_MAKEPOINT"]
