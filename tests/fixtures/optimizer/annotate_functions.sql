@@ -6306,3 +6306,15 @@ BIGINT;
 # dialect: trino
 ARRAY_FIRST(ARRAY['a', 'b'], x -> x = 'b');
 VARCHAR;
+
+--------------------------------------
+-- Postgres / Redshift
+--------------------------------------
+
+# dialect: postgres, redshift
+SIGN(tbl.int_col);
+INT;
+
+# dialect: postgres, redshift
+SIGN(tbl.double_col);
+DOUBLE;

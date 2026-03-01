@@ -47,6 +47,7 @@ from sqlglot.generator import unsupported_args
 from sqlglot.helper import is_int, seq_get
 from sqlglot.parser import binary_range_parser
 from sqlglot.tokens import TokenType
+from sqlglot.typing.postgres import EXPRESSION_METADATA
 
 if t.TYPE_CHECKING:
     from sqlglot.dialects.dialect import DialectType
@@ -305,6 +306,8 @@ class Postgres(Dialect):
     DEFAULT_FUNCTIONS_COLUMN_NAMES = {
         exp.ExplodingGenerateSeries: "generate_series",
     }
+
+    EXPRESSION_METADATA = EXPRESSION_METADATA.copy()
 
     TIME_MAPPING = {
         "d": "%u",  # 1-based day of week
